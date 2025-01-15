@@ -1,12 +1,11 @@
 from django.contrib import admin
-from .models import Material, PurchasedBatch, MaterialPurchase, HennaType, Customer, HennaSale
+from .models import BusinessAsset, Material, PurchasedBatch, MaterialPurchase, HennaType, Customer, HennaSale ,Expense ,HennaAppointment
 from django import forms
 # Register Material model
 @admin.register(Material)
 class MaterialAdmin(admin.ModelAdmin):
     list_display = ('name', 'unit')  # Show name and unit in the list
     search_fields = ('name',)  # Enable search by material name
-
 # Register PurchasedBatch model
 @admin.register(PurchasedBatch)
 class PurchasedBatchAdmin(admin.ModelAdmin):
@@ -50,10 +49,52 @@ class HennaSaleAdminForm(forms.ModelForm):
             raise forms.ValidationError("Both sale price per unit and quantity sold must be provided.")
         
         return cleaned_data
-    
-    
+
 @admin.register(HennaSale)
 class HennaSaleAdmin(admin.ModelAdmin):
-    form = HennaSaleAdminForm  # Use the custom form
-    list_display = ('henna_type', 'customer', 'quantity_sold', 'sale_price_per_unit', 'total_sale_revenue', 'production_cost', 'sale_date')
-    readonly_fields = ('total_sale_revenue', 'production_cost')  # Make these fields read-only
+    list_display = (
+        'henna_type', 'customer', 'quantity_sold', 'sale_price_per_unit', 
+        'actual_calculated_price', 'payment_received', 'remaining_balance', 
+        'is_settled', 'total_sale_revenue', 'profit_after_expenditure', 'sale_date'
+    )
+    readonly_fields = ('actual_calculated_price', 'total_sale_revenue', 'remaining_balance', 'profit_after_expenditure')
+    search_fields = ('henna_type__name', 'customer__name')
+    # list_filter = ('sale_date', 'is_settled')
+
+
+
+
+@admin.register(Expense)
+class ExpenseAdmin(admin.ModelAdmin):
+    list_display = ('sale', 'expense_type', 'value')
+    search_fields = ('sale__id', 'expense_type')
+    list_filter = ('expense_type',)
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+
+
+@admin.register(BusinessAsset)
+class BusinessAssetAdmin(admin.ModelAdmin):
+    list_display = ('name', 'cost', 'purchased_batch', 'purchase_date')
+    search_fields = ('name', 'purchased_batch__id')
+    list_filter = ('purchase_date', 'purchased_batch')
+
+
+
+
+
+@admin.register(HennaAppointment)
+class HennaAppointmentAdmin(admin.ModelAdmin):
+    list_display = ('customer_name', 'place', 'appointment_date', 'price_charged', 'expenses', 'profit')
+    search_fields = ('customer_name', 'contact_info', 'place')
+    list_filter = ('appointment_date',)
+    readonly_fields = ('profit',)

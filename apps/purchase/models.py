@@ -2,14 +2,14 @@ from django.db import models
 from django.db.models import Sum
 # Material: Tracks individual materials
 class Material(models.Model):
-    # Define choices for units
+    # Define choices for units, including gram and ml
     UNIT_CHOICES = [
-      
+     
         ('gram', 'Gram'),
+     
         ('ml', 'Milliliter'),
         ('count', 'Count'),
     ]
-
     
     name = models.CharField(max_length=100)
     unit = models.CharField(
@@ -20,8 +20,6 @@ class Material(models.Model):
     
     def __str__(self):
         return f"{self.name} ({self.get_unit_display()})"
-
-
 # PurchasedBatch: Tracks a batch of materials purchased at once
 class PurchasedBatch(models.Model):
     batch_code = models.CharField(max_length=50, unique=True)  # Unique batch code, e.g., "Batch-001"
@@ -68,7 +66,10 @@ class Customer(models.Model):
         return self.name
 
 
+
+
 # HennaSale: Tracks sales of henna products
+
 class HennaSale(models.Model):
     henna_type = models.ForeignKey(HennaType, on_delete=models.CASCADE)
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
@@ -77,28 +78,124 @@ class HennaSale(models.Model):
     sale_date = models.DateField(auto_now_add=True)
 
     purchased_batch = models.ForeignKey(
-        PurchasedBatch, 
-        null=True, 
-        blank=True, 
-        on_delete=models.SET_NULL, 
-        related_name="henna_sales"
+        PurchasedBatch,
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name="henna_sales",
+    )
+
+    payment_received = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        default=0.00,
+        help_text="Amount received from customer for this sale",
+    )
+    is_settled = models.BooleanField(
+        default=False,
+        help_text="Mark as True if the sale is settled (even with losses)",
+    )
+    total_sale_revenue = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        editable=False,
+        default=0.00,
+        help_text="The total revenue for this sale after adjustments.",
     )
 
     @property
-    def total_sale_revenue(self):
-        # Ensure that sale_price_per_unit and quantity_sold are not None
-        if self.sale_price_per_unit is not None and self.quantity_sold is not None:
-            return self.sale_price_per_unit * self.quantity_sold
-        return 0  # Return 0 if any of the values are None
+    def actual_calculated_price(self):
+        """The actual calculated price (quantity * price per unit) without adjustments."""
+        if self.quantity_sold and self.sale_price_per_unit:
+            return self.quantity_sold * self.sale_price_per_unit
+        return 0.00
+
+    @property
+    def remaining_balance(self):
+        # Calculate the remaining balance
+        return self.total_sale_revenue - self.payment_received
+
+    @property
+    def total_expenditure(self):
+        # Sum all related expenses
+        return self.expenses.aggregate(total=models.Sum('value'))['total'] or 0
+
+    @property
+    def profit_after_expenditure(self):
+        # Calculate profit after deducting expenses
+        return self.total_sale_revenue - self.total_expenditure
+
+    def save(self, *args, **kwargs):
+        # Automatically calculate total revenue based on quantity and unit price
+        if self.sale_price_per_unit and self.quantity_sold:
+            self.total_sale_revenue = self.sale_price_per_unit * self.quantity_sold
+
+        # If manually marked as settled, consider the remaining balance as lost
+        if self.is_settled and self.remaining_balance > 0:
+            self.total_sale_revenue = self.payment_received
+
+        # Automatically set 'is_settled' to True if payment_received >= total_sale_revenue
+        if self.payment_received >= self.total_sale_revenue:
+            self.is_settled = True
+
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return f"{self.quantity_sold} of {self.henna_type.name} sold to {self.customer.name} on {self.sale_date}"
 
-    @property
-    def production_cost(self):
-        if self.purchased_batch:
-            total_cost = self.purchased_batch.total_cost
-            total_units_produced = self.purchased_batch.materialpurchases.aggregate(Sum('quantity_purchased'))['quantity_purchased__sum']
-            if total_units_produced:
-                return total_cost * (self.quantity_sold / total_units_produced)
-        return 0  # If no batch is associated or data is missing
+
+
+class Expense(models.Model):
+    EXPENSE_TYPE_CHOICES = [
+        ('commission', 'Commission'),
+        ('travel', 'Travel Expense'),
+        ('misc', 'Miscellaneous'),
+    ]
+    
+    sale = models.ForeignKey(HennaSale, on_delete=models.CASCADE, related_name='expenses')
+    expense_type = models.CharField(max_length=50, choices=EXPENSE_TYPE_CHOICES)
+    value = models.DecimalField(max_digits=10, decimal_places=2)
+    
+    def __str__(self):
+        return f"{self.get_expense_type_display()} - {self.value} for Sale ID {self.sale.id}"
+
+
+
+class BusinessAsset(models.Model):
+    name = models.CharField(max_length=255, help_text="Name of the asset, e.g., Mixer, Gloves, Spoon")
+    description = models.TextField(blank=True, null=True, help_text="Additional details about the asset.")
+    purchase_date = models.DateField(auto_now_add=True, help_text="Date of purchase.")
+    cost = models.DecimalField(max_digits=10, decimal_places=2, help_text="Total cost of the asset.")
+    purchased_batch = models.ForeignKey(
+        PurchasedBatch,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="assets",
+        help_text="The henna batch associated with this asset purchase."
+    )
+
+    def __str__(self):
+        batch_info = f" (Batch: {self.purchased_batch.id})" if self.purchased_batch else ""
+        return f"{self.name} - ${self.cost}{batch_info}"
+    
+    
+    
+    
+
+class HennaAppointment(models.Model):
+    customer_name = models.CharField(max_length=255, help_text="Name of the customer.")
+    contact_info = models.CharField(max_length=255, help_text="Contact details of the customer (phone or email).")
+    place = models.CharField(max_length=255, help_text="Location where the henna service will be provided.")
+    appointment_date = models.DateTimeField(help_text="Date and time when the service is required.")
+    price_charged = models.DecimalField(max_digits=10, decimal_places=2, help_text="Total price charged for the service.")
+    expenses = models.DecimalField(max_digits=10, decimal_places=2, default=0.00, help_text="Total expenses incurred for this appointment (e.g., travel or materials).")
+    profit = models.DecimalField(max_digits=10, decimal_places=2, editable=False, help_text="Profit after deducting expenses from the price charged.")
+
+    def save(self, *args, **kwargs):
+        # Automatically calculate profit
+        self.profit = self.price_charged - self.expenses
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return f"Appointment with {self.customer_name} at {self.place} on {self.appointment_date.strftime('%Y-%m-%d %H:%M')}"
