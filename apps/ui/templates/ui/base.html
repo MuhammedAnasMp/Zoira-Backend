@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}My App{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Include Heroicons for icons -->
+    <script src="https://unpkg.com/@heroicons/react@2.0.11/outline/index.js"></script>
+    <!-- Load static files -->
+    {% load static %}
+    <!-- JavaScript for button functionality -->
+    <script>
+        function goBack() {
+            window.history.back(); // Navigate to the previous page
+        }
+
+        function goForward() {
+            window.history.forward(); // Navigate to the next page
+        }
+    </script>
+</head>
+<body class="bg-gray-100 font-sans antialiased">
+    <!-- Header -->
+    <header class="bg-gray-800 text-white shadow-lg">
+        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <!-- Logo and Title -->
+            <div class="flex items-center space-x-3">
+                <img src="{% static 'ui/images/logo.png' %}" alt="Logo" class="h-10 w-10 rounded-lg"> <!-- Use the static tag here -->
+                <h1 class="text-2xl font-bold">Zoira</h1>
+            </div>
+            <!-- Navigation Icons -->
+            <div class="flex space-x-4">
+                <button onclick="goBack()" class="p-2 bg-gray-700 rounded-lg hover:bg-gray-600 transition duration-300">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                    </svg>
+                </button>
+                <button onclick="goForward()" class="p-2 bg-gray-700 rounded-lg hover:bg-gray-600 transition duration-300">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-6 py-8">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-4 fixed bottom-0 w-full">
+        <div class="container mx-auto px-6 text-center">
+            <p class="text-sm">&copy; 2025 My App | All Rights Reserved</p>
+        </div>
+    </footer>
+</body>
+</html>

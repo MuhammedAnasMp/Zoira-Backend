@@ -1,8 +1,8 @@
 from django.db import models
 from django.db.models import Sum
 # Material: Tracks individual materials
-class Material(models.Model):
     # Define choices for units, including gram and ml
+class Material(models.Model):
     UNIT_CHOICES = [
      
         ('gram', 'Gram'),
