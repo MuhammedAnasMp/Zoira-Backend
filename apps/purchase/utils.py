@@ -51,6 +51,11 @@ def git_pull(request):
                 ['python', 'manage.py', 'migrate'], cwd=repo_path, text=True
             )
             logger.info(migrate_output)
+            # collect static
+            collect_static_output = subprocess.check_output(
+                ['python', 'manage.py', 'collectstatic'], cwd=repo_path, text=True
+            )
+            logger.info(collect_static_output)
 
             return JsonResponse({"status": "success"})
         except subprocess.CalledProcessError as e:

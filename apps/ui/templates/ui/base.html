@@ -23,21 +23,21 @@
 <body class="bg-gray-100 font-sans antialiased">
     <!-- Header -->
     <header class="bg-gray-800 text-white shadow-lg">
-        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+        <div class="container mx-auto px-4 sm:px-6 py-3 sm:py-4 flex justify-between items-center">
             <!-- Logo and Title -->
-            <div class="flex items-center space-x-3">
-                <img src="{% static 'ui/images/logo.png' %}" alt="Logo" class="h-10 w-10 rounded-lg"> <!-- Use the static tag here -->
-                <h1 class="text-2xl font-bold">Zoira</h1>
+            <div class="flex items-center space-x-2 sm:space-x-3">
+                <img src="{% static 'ui/images/logo.png' %}" alt="Logo" class="h-8 w-8 sm:h-10 sm:w-10 rounded-lg"> <!-- Use the static tag here -->
+                <h1 class="text-xl sm:text-2xl font-bold">Zoira</h1>
             </div>
             <!-- Navigation Icons -->
-            <div class="flex space-x-4">
-                <button onclick="goBack()" class="p-2 bg-gray-700 rounded-lg hover:bg-gray-600 transition duration-300">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <div class="flex space-x-2 sm:space-x-4">
+                <button onclick="goBack()" class="p-1 sm:p-2 bg-gray-700 rounded-lg hover:bg-gray-600 transition duration-300">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 sm:h-6 sm:w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
                     </svg>
                 </button>
-                <button onclick="goForward()" class="p-2 bg-gray-700 rounded-lg hover:bg-gray-600 transition duration-300">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <button onclick="goForward()" class="p-1 sm:p-2 bg-gray-700 rounded-lg hover:bg-gray-600 transition duration-300">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 sm:h-6 sm:w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
                     </svg>
                 </button>
@@ -46,14 +46,14 @@
     </header>
 
     <!-- Main Content -->
-    <main class="container mx-auto px-6 py-8">
+    <main class="container mx-auto px-4 sm:px-6 py-6 sm:py-8">
         {% block content %}{% endblock %}
     </main>
 
     <!-- Footer -->
-    <footer class="bg-gray-800 text-white py-4 fixed bottom-0 w-full">
-        <div class="container mx-auto px-6 text-center">
-            <p class="text-sm">&copy; 2025 My App | All Rights Reserved</p>
+    <footer class="bg-gray-800 text-white py-3 sm:py-4 fixed bottom-0 w-full">
+        <div class="container mx-auto px-4 sm:px-6 text-center">
+            <p class="text-xs sm:text-sm">&copy; 2025 My App | All Rights Reserved</p>
         </div>
     </footer>
 </body>

@@ -1,37 +1,37 @@
 {% extends 'ui/base.html' %}
 
 {% block content %}
-<div class="container mx-auto p-6">
-    <h2 class="text-3xl font-bold mb-6 text-gray-800">Materials Management</h2>
+<div class="container mx-auto p-4">
+    <h2 class="text-2xl font-bold mb-4 text-gray-800">Materials Management</h2>
 
     <!-- Tabs -->
-    <div class="flex space-x-4 mb-6">
-        <button id="batchesTab" class="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+    <div class="flex space-x-2 mb-4">
+        <button id="batchesTab" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 text-sm">
             Show Purchases
         </button>
-        <button id="materialsTab" class="bg-gray-300 text-gray-700 px-6 py-3 rounded-lg hover:bg-gray-400 transition duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2">
+        <button id="materialsTab" class="bg-gray-300 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-400 transition duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 text-sm">
             Show Materials
         </button>
     </div>
 
     <!-- Materials List -->
     <div id="materialsSection" class="tab-content">
-        <div class="flex justify-between items-center mb-6">
-            <h3 class="text-2xl font-semibold text-gray-800">Materials List</h3>
-            <button class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition duration-300 ease-in-out" onclick="openMaterialModal()">+ Add Material</button>
+        <div class="flex justify-between items-center mb-4">
+            <h3 class="text-xl font-semibold text-gray-800">Materials List</h3>
+            <button class="bg-green-600 text-white px-3 py-1.5 rounded-lg hover:bg-green-700 transition duration-300 ease-in-out text-sm" onclick="openMaterialModal()">+ Add Material</button>
         </div>
         <table class="w-full border-collapse">
             <thead>
                 <tr class="bg-gray-100">
-                    <th class="p-3 text-left text-gray-700">Name</th>
-                    <th class="p-3 text-left text-gray-700">Unit</th>
+                    <th class="p-2 text-left text-gray-700 text-sm">Name</th>
+                    <th class="p-2 text-left text-gray-700 text-sm">Unit</th>
                 </tr>
             </thead>
             <tbody>
                 {% for material in materials %}
                 <tr class="hover:bg-gray-50 transition duration-300 ease-in-out">
-                    <td class="p-3 border-t border-gray-200 text-gray-700">{{ material.name }}</td>
-                    <td class="p-3 border-t border-gray-200 text-gray-700">{{ material.get_unit_display }}</td>
+                    <td class="p-2 border-t border-gray-200 text-gray-700 text-sm">{{ material.name }}</td>
+                    <td class="p-2 border-t border-gray-200 text-gray-700 text-sm">{{ material.get_unit_display }}</td>
                 </tr>
                 {% endfor %}
             </tbody>
@@ -40,32 +40,32 @@
 
     <!-- Purchased Batches List -->
     <div id="batchesSection" class="tab-content hidden">
-        <div class="flex justify-between items-center mb-6">
-            <h3 class="text-2xl font-semibold text-gray-800">Purchases</h3>
-            <button class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition duration-300 ease-in-out" onclick="openBatchModal()">+ New Purchase</button>
+        <div class="flex justify-between items-center mb-4">
+            <h3 class="text-xl font-semibold text-gray-800">Purchases</h3>
+            <button class="bg-blue-600 text-white px-3 py-1.5 rounded-lg hover:bg-blue-700 transition duration-300 ease-in-out text-sm" onclick="openBatchModal()">+ New Purchase</button>
         </div>
         <table class="w-full border-collapse">
             <thead>
                 <tr class="bg-gray-100">
-                    <th class="p-3 text-left text-gray-700">Batch</th>
-                    <th class="p-3 text-left text-gray-700">Purchase Date</th>
-                    <th class="p-3 text-left text-gray-700">Materials</th>
-                    <th class="p-3 text-left text-gray-700">Total Cost</th>
+                    <th class="p-2 text-left text-gray-700 text-sm">Batch</th>
+                    <th class="p-2 text-left text-gray-700 text-sm">Purchase Date</th>
+                    <th class="p-2 text-left text-gray-700 text-sm">Materials</th>
+                    <th class="p-2 text-left text-gray-700 text-sm">Total Cost</th>
                 </tr>
             </thead>
             <tbody>
                 {% for batch in batches %}
                 <tr class="hover:bg-gray-50 transition duration-300 ease-in-out">
-                    <td class="p-3 border-t border-gray-200 text-gray-700">{{ batch.batch_code }}</td>
-                    <td class="p-3 border-t border-gray-200 text-gray-700">{{ batch.purchase_date }}</td>
-                    <td class="p-3 border-t border-gray-200 text-gray-700">
+                    <td class="p-2 border-t border-gray-200 text-gray-700 text-sm">{{ batch.batch_code }}</td>
+                    <td class="p-2 border-t border-gray-200 text-gray-700 text-sm">{{ batch.purchase_date }}</td>
+                    <td class="p-2 border-t border-gray-200 text-gray-700 text-sm">
                         {% for material_purchase in batch.materialpurchases.all %}
                             {{ material_purchase.material.name }} ({{ material_purchase.quantity_purchased }})<br>
                         {% empty %}
                             No materials
                         {% endfor %}
                     </td>
-                    <td class="p-3 border-t border-gray-200 text-gray-700">{{ batch.total_cost }}</td>
+                    <td class="p-2 border-t border-gray-200 text-gray-700 text-sm">{{ batch.total_cost }}</td>
                 </tr>
                 {% endfor %}
             </tbody>
@@ -75,17 +75,17 @@
 
 <!-- Add Material Modal -->
 <div id="materialModal" class="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 hidden">
-    <div class="bg-white rounded-lg shadow-xl p-6 w-full max-w-md transform transition-all duration-300 ease-in-out">
-        <h3 class="text-2xl font-semibold text-gray-800 mb-4">Add Material</h3>
+    <div class="bg-white rounded-lg shadow-xl p-4 w-full max-w-md transform transition-all duration-300 ease-in-out">
+        <h3 class="text-xl font-semibold text-gray-800 mb-4">Add Material</h3>
         <form id="materialForm" class="space-y-4">
             <div>
                 <label for="materialName" class="block text-sm font-medium text-gray-700">Material Name</label>
                 <input type="text" id="materialName" placeholder="Material Name"
-                    class="w-full mt-1 p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-300 ease-in-out">
+                    class="w-full mt-1 p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-300 ease-in-out text-sm">
             </div>
             <div>
                 <label for="materialUnit" class="block text-sm font-medium text-gray-700">Unit</label>
-                <select id="materialUnit" class="w-full mt-1 p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-300 ease-in-out">
+                <select id="materialUnit" class="w-full mt-1 p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-300 ease-in-out text-sm">
                     <option value="gram">Gram</option>
                     <option value="ml">Milliliter</option>
                     <option value="count">Count</option>
@@ -93,9 +93,9 @@
             </div>
             <div class="flex justify-end space-x-2">
                 <button type="button" onclick="closeMaterialModal()"
-                    class="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition duration-300 ease-in-out">Cancel</button>
+                    class="px-3 py-1.5 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition duration-300 ease-in-out text-sm">Cancel</button>
                 <button type="submit"
-                    class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition duration-300 ease-in-out">Save</button>
+                    class="px-3 py-1.5 bg-green-600 text-white rounded-lg hover:bg-green-700 transition duration-300 ease-in-out text-sm">Save</button>
             </div>
         </form>
     </div>
@@ -103,13 +103,13 @@
 
 <!-- Add Purchased Batch Modal -->
 <div id="batchModal" class="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 hidden">
-    <div class="bg-white rounded-lg shadow-xl p-6 w-full max-w-md transform transition-all duration-300 ease-in-out">
-        <h3 class="text-2xl font-semibold text-gray-800 mb-4">Create Purchased</h3>
+    <div class="bg-white rounded-lg shadow-xl p-4 w-full max-w-md transform transition-all duration-300 ease-in-out">
+        <h3 class="text-xl font-semibold text-gray-800 mb-4">Create Purchased</h3>
         <form id="batchForm" class="space-y-4">
             <!-- Select existing batch -->
             <div>
                 <label for="existingBatch" class="block text-sm font-medium text-gray-700">Select Existing Batch</label>
-                <select id="existingBatch" class="w-full mt-1 p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-300 ease-in-out">
+                <select id="existingBatch" class="w-full mt-1 p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-300 ease-in-out text-sm">
                     <option value="">-- Select Batch (or create new) --</option>
                     {% for batch in batches %}
                     <option value="{{ batch.id }}">{{ batch.batch_code }}</option>
@@ -121,13 +121,13 @@
             <div>
                 <label for="batchCode" class="block text-sm font-medium text-gray-700">Or, Enter New Batch Name</label>
                 <input type="text" id="batchCode" placeholder="New Batch Name"
-                    class="w-full mt-1 p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-300 ease-in-out">
+                    class="w-full mt-1 p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-300 ease-in-out text-sm">
             </div>
 
             <!-- Material selection -->
             <div>
                 <label for="batchMaterial" class="block text-sm font-medium text-gray-700">Select Material</label>
-                <select id="batchMaterial" class="w-full mt-1 p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-300 ease-in-out">
+                <select id="batchMaterial" class="w-full mt-1 p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-300 ease-in-out text-sm">
                     {% for material in materials %}
                     <option value="{{ material.id }}">{{ material.name }}</option>
                     {% endfor %}
@@ -139,22 +139,22 @@
                 <div>
                     <label for="batchQuantity" class="block text-sm font-medium text-gray-700">Quantity</label>
                     <input type="number" id="batchQuantity" placeholder="Quantity"
-                        class="w-full mt-1 p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-300 ease-in-out">
+                        class="w-full mt-1 p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-300 ease-in-out text-sm">
                 </div>
 
                 <div>
                     <label for="batchCost" class="block text-sm font-medium text-gray-700">Total Cost</label>
                     <input type="number" id="batchCost" placeholder="Total Cost"
-                        class="w-full mt-1 p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-300 ease-in-out">
+                        class="w-full mt-1 p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-300 ease-in-out text-sm">
                 </div>
             </div>
 
             <!-- Buttons -->
             <div class="flex justify-end space-x-2">
                 <button type="button" onclick="closeBatchModal()"
-                    class="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition duration-300 ease-in-out">Cancel</button>
+                    class="px-3 py-1.5 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition duration-300 ease-in-out text-sm">Cancel</button>
                 <button type="submit"
-                    class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-300 ease-in-out">Save</button>
+                    class="px-3 py-1.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-300 ease-in-out text-sm">Save</button>
             </div>
         </form>
     </div>

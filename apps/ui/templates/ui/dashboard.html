@@ -3,73 +3,73 @@
 {% block title %}Dashboard{% endblock %}
 
 {% block content %}
-<div class="container mx-auto px-4 py-8">
+<div class="container mx-auto px-4 py-6">
     <!-- Sales Summary Section -->
-    <div class="bg-white shadow rounded-lg p-6 mb-8">
-        <h2 class="text-2xl font-semibold text-gray-800 mb-4">📊 Sales Summary</h2>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div class="bg-blue-50 p-4 rounded-lg">
+    <div class="bg-white shadow rounded-lg p-4 mb-6">
+        <h2 class="text-xl font-semibold text-gray-800 mb-4">📊 Sales Summary</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+            <div class="bg-blue-50 p-3 rounded-lg">
                 <p class="text-sm font-medium text-gray-600">Today's Sales</p>
-                <p class="text-xl font-bold text-blue-600">₹{{ today_sales }}</p>
+                <p class="text-lg font-bold text-blue-600">₹{{ today_sales }}</p>
             </div>
-            <div class="bg-green-50 p-4 rounded-lg">
+            <div class="bg-green-50 p-3 rounded-lg">
                 <p class="text-sm font-medium text-gray-600">This Month's Sales</p>
-                <p class="text-xl font-bold text-green-600">₹{{ month_sales }}</p>
+                <p class="text-lg font-bold text-green-600">₹{{ month_sales }}</p>
             </div>
-            <div class="bg-purple-50 p-4 rounded-lg">
+            <div class="bg-purple-50 p-3 rounded-lg">
                 <p class="text-sm font-medium text-gray-600">Total Sales</p>
-                <p class="text-xl font-bold text-purple-600">₹{{ total_sales }}</p>
+                <p class="text-lg font-bold text-purple-600">₹{{ total_sales }}</p>
             </div>
         </div>
     </div>
 
     <!-- Expenses Summary Section -->
-    <div class="bg-white shadow rounded-lg p-6 mb-8">
-        <h2 class="text-2xl font-semibold text-gray-800 mb-4">📉 Expenses Summary</h2>
-        <ul class="space-y-3">
+    <div class="bg-white shadow rounded-lg p-4 mb-6">
+        <h2 class="text-xl font-semibold text-gray-800 mb-4">📉 Expenses Summary</h2>
+        <ul class="space-y-2">
             {% for expense in expenses_summary %}
-            <li class="bg-gray-50 p-4 rounded-lg">
+            <li class="bg-gray-50 p-3 rounded-lg">
                 <span class="text-sm font-medium text-gray-600">{{ expense.expense_type }}:</span>
-                <span class="text-lg font-bold text-gray-800">₹{{ expense.total }}</span>
+                <span class="text-base font-bold text-gray-800">₹{{ expense.total }}</span>
             </li>
             {% endfor %}
         </ul>
     </div>
 
-<!-- Material Overview Section -->
-<div class="bg-white shadow rounded-lg p-6 mb-8">
-    <h2 class="text-2xl font-semibold text-gray-800 mb-4">📦 Material Overview</h2>
-    <ul class="space-y-3 mb-6">
-        {% for stock in stock_overview %}
-        <li class="bg-gray-50 p-4 rounded-lg">
-            <span class="text-sm font-medium text-gray-600">{{ stock.material__name }}:</span>
-            <span class="text-lg font-bold text-gray-800">{{ stock.total_purchased }} {{ stock.material__unit }}</span>
-        </li>
-        {% endfor %}
-    </ul>
-    <!-- Add New Material Button -->
-    <a href="/materials/" class="inline-flex items-center justify-center px-4 py-2 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
-        <span>➕ Add New Material</span>
-    </a>
-</div>
+    <!-- Material Overview Section -->
+    <div class="bg-white shadow rounded-lg p-4 mb-6">
+        <h2 class="text-xl font-semibold text-gray-800 mb-4">📦 Material Overview</h2>
+        <ul class="space-y-2 mb-4">
+            {% for stock in stock_overview %}
+            <li class="bg-gray-50 p-3 rounded-lg">
+                <span class="text-sm font-medium text-gray-600">{{ stock.material__name }}:</span>
+                <span class="text-base font-bold text-gray-800">{{ stock.total_purchased }} {{ stock.material__unit }}</span>
+            </li>
+            {% endfor %}
+        </ul>
+        <!-- Add New Material Button -->
+        <a href="/materials/" class="inline-flex items-center justify-center px-3 py-2 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 text-sm">
+            <span>➕ Add New Material</span>
+        </a>
+    </div>
 
     <!-- Outstanding Payments Section -->
-    <div class="bg-white shadow rounded-lg p-6 mb-8">
-        <h2 class="text-2xl font-semibold text-gray-800 mb-4">💰 Outstanding Payments</h2>
-        <div class="bg-red-50 p-4 rounded-lg">
+    <div class="bg-white shadow rounded-lg p-4 mb-6">
+        <h2 class="text-xl font-semibold text-gray-800 mb-4">💰 Outstanding Payments</h2>
+        <div class="bg-red-50 p-3 rounded-lg">
             <p class="text-sm font-medium text-gray-600">Total Due</p>
-            <p class="text-xl font-bold text-red-600">₹{{ outstanding_payments }}</p>
+            <p class="text-lg font-bold text-red-600">₹{{ outstanding_payments }}</p>
         </div>
     </div>
 
     <!-- Upcoming Appointments Section -->
-    <div class="bg-white shadow rounded-lg p-6">
-        <h2 class="text-2xl font-semibold text-gray-800 mb-4">🗓 Upcoming Appointments</h2>
-        <ul class="space-y-3">
+    <div class="bg-white shadow rounded-lg p-4">
+        <h2 class="text-xl font-semibold text-gray-800 mb-4">🗓 Upcoming Appointments</h2>
+        <ul class="space-y-2">
             {% for appointment in upcoming_appointments %}
-            <li class="bg-gray-50 p-4 rounded-lg">
+            <li class="bg-gray-50 p-3 rounded-lg">
                 <span class="text-sm font-medium text-gray-600">{{ appointment.appointment_date }}:</span>
-                <span class="text-lg font-bold text-gray-800">{{ appointment.customer_name }}</span>
+                <span class="text-base font-bold text-gray-800">{{ appointment.customer_name }}</span>
             </li>
             {% endfor %}
         </ul>
