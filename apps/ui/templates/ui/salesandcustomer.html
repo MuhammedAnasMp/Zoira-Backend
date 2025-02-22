@@ -1,0 +1,202 @@
+{% extends "ui/base.html" %}
+{% block content %}
+<div class="container mx-auto p-4">
+    <h2 class="text-2xl font-bold mb-4">Henna Sales and Customers</h2>
+
+    {% if messages %}
+    <ul class="mb-4">
+        {% for message in messages %}
+        <li class="p-2 rounded {% if message.tags == 'success' %}bg-green-200 text-green-800{% else %}bg-red-200 text-red-800{% endif %}">
+            {{ message }}
+        </li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+
+    <div class="mb-4 flex flex-col sm:flex-row gap-2">
+        <button onclick="openPopup('hennaPopup')" class="bg-purple-500 text-white px-4 py-2 rounded hover:bg-purple-600">+ Add Henna Type</button>
+        <button onclick="openPopup('customerPopup')" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">+ Add Customer</button>
+        <button onclick="openPopup('salePopup')" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">+ Create Sale</button>
+    </div>
+
+    <h3 class="text-xl font-semibold mb-2">Sales Records</h3>
+    <div class="overflow-x-auto">
+        <table class="min-w-full bg-white border border-gray-300">
+            <thead>
+                <tr class="bg-gray-100">
+                    <th class="py-2 px-4 border-b">Henna Type</th>
+                    <th class="py-2 px-4 border-b">Customer</th>
+                    <th class="py-2 px-4 border-b">Quantity Sold</th>
+                    <th class="py-2 px-4 border-b">Sale Price (per unit)</th>
+                    <th class="py-2 px-4 border-b">Total Revenue</th>
+                    <th class="py-2 px-4 border-b">Sale Date</th>
+                    <th class="py-2 px-4 border-b">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for sale in sales %}
+                <tr class="hover:bg-gray-50">
+                    <td class="py-2 px-4 border-b">{{ sale.henna_type.name }}</td>
+                    <td class="py-2 px-4 border-b">{{ sale.customer.name }}</td>
+                    <td class="py-2 px-4 border-b">{{ sale.quantity_sold }}</td>
+                    <td class="py-2 px-4 border-b">${{ sale.sale_price_per_unit }}</td>
+                    <td class="py-2 px-4 border-b">${{ sale.total_sale_revenue }}</td>
+                    <td class="py-2 px-4 border-b">{{ sale.sale_date }}</td>
+                    <td class="py-2 px-4 border-b">
+                        <a href="{% url 'delete_sale' sale.id %}" onclick="return confirm('Are you sure?');" class="text-red-500 hover:text-red-700">Delete</a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="7" class="py-2 px-4 border-b text-center">No sales recorded.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="flex flex-col sm:flex-row gap-4 mt-6">
+        <div class="w-full sm:w-1/2">
+            <h3 class="text-xl font-semibold mb-2">Customer Records</h3>
+            <div class="overflow-x-auto">
+                <table class="min-w-full bg-white border border-gray-300">
+                    <thead>
+                        <tr class="bg-gray-100">
+                            <th class="py-2 px-4 border-b">Name</th>
+                            <th class="py-2 px-4 border-b">Contact Info</th>
+                            <th class="py-2 px-4 border-b">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for customer in customers %}
+                        <tr class="hover:bg-gray-50">
+                            <td class="py-2 px-4 border-b">{{ customer.name }}</td>
+                            <td class="py-2 px-4 border-b">{{ customer.contact_info|default:"N/A" }}</td>
+                            <td class="py-2 px-4 border-b">
+                                <a href="{% url 'delete_customer' customer.id %}" onclick="return confirm('Are you sure?');" class="text-red-500 hover:text-red-700">Delete</a>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="3" class="py-2 px-4 border-b text-center">No customers found.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="w-full sm:w-1/2">
+            <h3 class="text-xl font-semibold mb-2">Henna Types</h3>
+            <div class="overflow-x-auto">
+                <table class="min-w-full bg-white border border-gray-300">
+                    <thead>
+                        <tr class="bg-gray-100">
+                            <th class="py-2 px-4 border-b">Henna Type</th>
+                            <th class="py-2 px-4 border-b">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for henna in henna_types %}
+                        <tr class="hover:bg-gray-50">
+                            <td class="py-2 px-4 border-b">{{ henna.name }}</td>
+                            <td class="py-2 px-4 border-b">
+                                <a href="{% url 'delete_henna_type' henna.id %}" onclick="return confirm('Are you sure?');" class="text-red-500 hover:text-red-700">Delete</a>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="2" class="py-2 px-4 border-b text-center">No henna types found.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Customer Popup -->
+<div id="customerPopup" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden">
+    <div class="bg-white rounded-lg p-6 w-full sm:w-1/3 shadow-lg mx-4">
+        <span class="float-right cursor-pointer text-gray-700 hover:text-gray-900 text-2xl" onclick="closePopup('customerPopup')">&times;</span>
+        <h3 class="text-xl font-semibold mb-4">Add Customer</h3>
+        <form method="post" action="{% url 'create_customer' %}">
+            {% csrf_token %}
+            <div class="space-y-4">
+                {% for field in customer_form %}
+                <div>
+                    <label for="{{ field.id_for_label }}" class="block text-sm font-medium text-gray-700">{{ field.label }}</label>
+                    <div class="mt-1 w-full px-3 py-2 border rounded">{{ field }}</div>
+                    {% if field.help_text %}<p class="mt-2 text-sm text-gray-500">{{ field.help_text }}</p>{% endif %}
+                    {% if field.errors %}<p class="mt-2 text-sm text-red-600">{{ field.errors }}</p>{% endif %}
+                </div>
+                {% endfor %}
+            </div>
+            <button type="submit" class="mt-6 bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-shadow shadow-sm hover:shadow-md">Save</button>
+        </form>
+    </div>
+</div>
+
+<!-- Sale Popup -->
+<div id="salePopup" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden">
+    <div class="bg-white rounded-lg p-6 w-full sm:w-1/3 mx-4">
+        <span class="float-right cursor-pointer text-gray-700" onclick="closePopup('salePopup')">&times;</span>
+        <h3 class="text-xl font-semibold mb-4">Create Sale</h3>
+        <form method="post" action="{% url 'create_sale' %}">
+            {% csrf_token %}
+            <div class="mb-4">
+                <label class="block text-gray-700">Henna Type:</label>
+                <select name="henna_type" class="w-full px-3 py-2 border rounded">
+                    {% for henna in henna_types %}<option value="{{ henna.id }}">{{ henna.name }}</option>{% endfor %}
+                </select>
+            </div>
+            <div class="mb-4">
+                <label class="block text-gray-700">Customer:</label>
+                <select name="customer" class="w-full px-3 py-2 border rounded">
+                    {% for customer in customers %}<option value="{{ customer.id }}">{{ customer.name }}</option>{% endfor %}
+                </select>
+            </div>
+            <div class="mb-4">
+                <label class="block text-gray-700">Quantity Sold:</label>
+                <input type="number" name="quantity_sold" class="w-full px-3 py-2 border rounded" required>
+            </div>
+            <div class="mb-4">
+                <label class="block text-gray-700">Sale Price per Unit:</label>
+                <input type="text" name="sale_price_per_unit" class="w-full px-3 py-2 border rounded" required>
+            </div>
+            <button type="submit" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">Save</button>
+        </form>
+    </div>
+</div>
+
+<!-- Henna Type Popup -->
+<div id="hennaPopup" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden">
+    <div class="bg-white rounded-lg p-6 w-full sm:w-1/3 shadow-lg mx-4">
+        <span class="float-right cursor-pointer text-gray-700 hover:text-gray-900 text-2xl" onclick="closePopup('hennaPopup')">&times;</span>
+        <h3 class="text-xl font-semibold mb-4">Add Henna Type</h3>
+        <form method="post" action="{% url 'create_henna_type' %}">
+            {% csrf_token %}
+            <div class="space-y-4">
+                {% for field in henna_form %}
+                <div>
+                    <label for="{{ field.id_for_label }}" class="block text-sm font-medium text-gray-700">{{ field.label }}</label>
+                    <div class="mt-1 w-full px-3 py-2 border rounded">{{ field }}</div>
+                    {% if field.errors %}<p class="mt-2 text-sm text-red-600">{{ field.errors }}</p>{% endif %}
+                </div>
+                {% endfor %}
+            </div>
+            <button type="submit" class="mt-6 bg-purple-500 text-white px-4 py-2 rounded-lg hover:bg-purple-600 transition-shadow shadow-sm hover:shadow-md">Save</button>
+        </form>
+    </div>
+</div>
+
+<script>
+    function openPopup(id) {
+        document.getElementById(id).classList.remove('hidden');
+    }
+
+    function closePopup(id) {
+        document.getElementById(id).classList.add('hidden');
+    }
+</script>
+{% endblock %}

@@ -2,22 +2,22 @@
 
 {% block content %}
 <div class="container mx-auto p-4">
-    <h2 class="text-2xl font-bold mb-4 text-gray-800">Materials Management</h2>
+    <!-- <h2 class="text-2xl font-bold mb-4 text-gray-800">Materials Management</h2> -->
 
     <!-- Tabs -->
     <div class="flex space-x-2 mb-4">
         <button id="batchesTab" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 text-sm">
-            Show Purchases
+            View Purchases
         </button>
         <button id="materialsTab" class="bg-gray-300 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-400 transition duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 text-sm">
-            Show Materials
+            View Materials
         </button>
     </div>
 
     <!-- Materials List -->
     <div id="materialsSection" class="tab-content">
         <div class="flex justify-between items-center mb-4">
-            <h3 class="text-xl font-semibold text-gray-800">Materials List</h3>
+            <h3 class="text-xl font-semibold text-gray-800">Materials</h3>
             <button class="bg-green-600 text-white px-3 py-1.5 rounded-lg hover:bg-green-700 transition duration-300 ease-in-out text-sm" onclick="openMaterialModal()">+ Add Material</button>
         </div>
         <table class="w-full border-collapse">
@@ -50,6 +50,8 @@
                     <th class="p-2 text-left text-gray-700 text-sm">Batch</th>
                     <th class="p-2 text-left text-gray-700 text-sm">Purchase Date</th>
                     <th class="p-2 text-left text-gray-700 text-sm">Materials</th>
+                    <th class="p-2 text-left text-gray-700 text-sm">Quantity Purchased</th>
+                    <th class="p-2 text-left text-gray-700 text-sm">Cost</th>
                     <th class="p-2 text-left text-gray-700 text-sm">Total Cost</th>
                 </tr>
             </thead>
@@ -60,16 +62,31 @@
                     <td class="p-2 border-t border-gray-200 text-gray-700 text-sm">{{ batch.purchase_date }}</td>
                     <td class="p-2 border-t border-gray-200 text-gray-700 text-sm">
                         {% for material_purchase in batch.materialpurchases.all %}
-                            {{ material_purchase.material.name }} ({{ material_purchase.quantity_purchased }})<br>
+                            {{ material_purchase.material.name }}<br>
                         {% empty %}
                             No materials
                         {% endfor %}
                     </td>
-                    <td class="p-2 border-t border-gray-200 text-gray-700 text-sm">{{ batch.total_cost }}</td>
+                    <td class="p-2 border-t border-gray-200 text-gray-700 text-sm">
+                        {% for material_purchase in batch.materialpurchases.all %}
+                            {{ material_purchase.quantity_purchased|floatformat:0 }} {{ material_purchase.material.get_unit_display }}<br>
+                        {% empty %}
+                            -
+                        {% endfor %}
+                    </td>
+                    <td class="p-2 border-t border-gray-200 text-gray-700 text-sm">
+                        {% for material_purchase in batch.materialpurchases.all %}
+                            ₹ {{ material_purchase.cost|floatformat:0 }}<br>
+                        {% empty %}
+                            -
+                        {% endfor %}
+                    </td>
+                    <td class="p-2 border-t border-gray-200 text-gray-700 text-sm">₹ {{ batch.total_cost|floatformat:0 }}</td>
                 </tr>
                 {% endfor %}
             </tbody>
         </table>
+        
     </div>
 </div>
 
@@ -107,31 +124,41 @@
         <h3 class="text-xl font-semibold text-gray-800 mb-4">Create Purchased</h3>
         <form id="batchForm" class="space-y-4">
             <!-- Select existing batch -->
-            <div>
-                <label for="existingBatch" class="block text-sm font-medium text-gray-700">Select Existing Batch</label>
-                <select id="existingBatch" class="w-full mt-1 p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-300 ease-in-out text-sm">
-                    <option value="">-- Select Batch (or create new) --</option>
-                    {% for batch in batches %}
-                    <option value="{{ batch.id }}">{{ batch.batch_code }}</option>
-                    {% endfor %}
-                </select>
+            <div class="flex items-center gap-4">
+                <!-- Select existing batch -->
+                <div class="w-1/2">
+                    <label for="existingBatch" class="block text-sm font-medium text-gray-700">Select Batch</label>
+                    <select id="existingBatch"
+                        class="w-full mt-1 p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-300 ease-in-out text-sm">
+                        <option value="">Select Batch </option>
+                        {% for batch in batches %}
+                        <option value="{{ batch.id }}">{{ batch.batch_code }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            <div >or</div>
+                <!-- Or enter a new batch code -->
+                <div class="w-1/2">
+                    <label for="batchCode" class="block text-sm font-medium text-gray-700">New Batch </label>
+                    <input type="text" id="batchCode" placeholder="New Batch Name"
+                        class="w-full mt-1 p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-300 ease-in-out text-sm">
+                </div>
             </div>
-
-            <!-- Or enter a new batch code -->
-            <div>
-                <label for="batchCode" class="block text-sm font-medium text-gray-700">Or, Enter New Batch Name</label>
-                <input type="text" id="batchCode" placeholder="New Batch Name"
-                    class="w-full mt-1 p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-300 ease-in-out text-sm">
-            </div>
+            
 
             <!-- Material selection -->
             <div>
                 <label for="batchMaterial" class="block text-sm font-medium text-gray-700">Select Material</label>
-                <select id="batchMaterial" class="w-full mt-1 p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-300 ease-in-out text-sm">
-                    {% for material in materials %}
-                    <option value="{{ material.id }}">{{ material.name }}</option>
-                    {% endfor %}
-                </select>
+              <div class="flex">
+
+                  <select id="batchMaterial" class="w-full mt-1 p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-300 ease-in-out text-sm">
+                      {% for material in materials %}
+                      <option value="{{ material.id }}">{{ material.name }}</option>
+                      {% endfor %}
+                    </select>
+
+                    <button onclick="clickMaterialAdd()" type="button"  class=" ml-2 px-3 py-1.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-300 ease-in-out text-sm w-fit">+Material</button>
+                </div>
             </div>
 
             <!-- Quantity & Cost -->
@@ -213,6 +240,15 @@ document.getElementById('batchesTab').addEventListener('click', function () {
 });
 
 // Open & Close Material Modal
+
+
+
+function clickMaterialAdd() {
+    
+    document.getElementById('batchModal').classList.add('hidden');
+    document.getElementById('materialModal').classList.remove('hidden');
+}
+
 function openMaterialModal() {
     document.getElementById('materialModal').classList.remove('hidden');
 }
